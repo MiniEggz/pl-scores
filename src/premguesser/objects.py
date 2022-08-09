@@ -28,6 +28,7 @@ class Table:
             print(team["goals_for"], end="\t")
             print(team["goals_against"], end="\t")
             print(team["points"])
+        print("===============================================")
 
     @staticmethod
     def _compare(team1, team2):
