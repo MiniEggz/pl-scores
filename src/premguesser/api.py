@@ -1,8 +1,9 @@
 # contain methods used to pull data from FPL api.
+from functools import cmp_to_key
 from typing import List
 
 import requests
-from functools import cmp_to_key
+from objects import Table
 
 response = requests.get(url="https://fantasy.premierleague.com/api/bootstrap-static/")
 
@@ -72,8 +73,7 @@ el_response = requests.get("https://fantasy.premierleague.com/api/element-summar
 
 # premier league website and fpl use different names for teams...
 team_points = [0 for i in range(20)]
-
-strip_teams(teams, ["id", "name"])
+strip_teams(teams, ["id", "name", "short_name"])
 reset_stats(teams)
 
 for fixture in fixtures:
@@ -100,55 +100,9 @@ for team in teams:
     team["goal_difference"] = team["goals_for"] - team["goals_against"]
 
 
-class Table:
-    def __init__(self, teams):
-        self.teams = teams.copy()
-
-    def get_table(self):
-        """Get the current table."""
-        # for i in range (1, len(teams)):
-        #     for j, team in enumerate(teams):
-
-        return sorted(self.teams, key=cmp_to_key(self._compare))
-
-    @staticmethod
-    def _compare(team1, team2):
-        # compare points
-        if team1["points"] < team2["points"]:
-            return 1
-        elif team1["points"] > team2["points"]:
-            return -1
-        else:
-            # compare goal difference
-            if team1["goal_difference"] < team2["goal_difference"]:
-                return 1
-            elif team1["goal_difference"] > team2["goal_difference"]:
-                return -1
-            else:
-                # compare goals for
-                if team1["goals_for"] < team2["goals_for"]:
-                    return 1
-                elif team2["goals_for"] > team2["goals_for"]:
-                    return -1
-                else:
-                    # compare goals against
-                    if team1["goals_against"] < team2["goals_against"]:
-                        return -1
-                    elif team2["goals_against"] > team2["goals_against"]:
-                        return 1
-                    else:
-                        # default to alphabet
-                        if team1["name"] < team2["name"]:
-                            return -1
-                        else:
-                            return 1
-
-
 league_table = Table(teams)
 # print(league_table.sort())
-for i in league_table.get_table():
-    print(i)
-
+league_table.display_table()
 # for i in range(20):
 #     print(teams[i]["name"], end="")
 #     print(" - ", end="")
