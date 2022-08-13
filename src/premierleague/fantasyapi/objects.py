@@ -32,8 +32,29 @@ class Player(BaseModel):
 class AllPlayers:
     """Holds all players."""
 
-    def __init__(self, players_response: dict):
-        self.players = [Player(**player) for player in players_response]
+    def __init__(self, players_raw: List[dict]):
+        self.players = [Player(**player) for player in players_raw]
+
+    def display_top_scorers(self):
+        """Display top scorers."""
+        print(f"Top goal scorer(s) with {self.get_top_goals_scored()} goal(s): ")
+        for player in self.get_top_scorers():
+            print("\t" + player.name)
+
+    def display_top_assisters(self):
+        """Display top assisters."""
+        print(f"Top assister(s) with {self.get_top_assists_number()} assist(s):")
+        for player in self.get_top_assisters():
+            print("\t" + player.name)
+
+    def display_keepers_with_most_clean_sheets(self):
+        """Display keepers with the most clean sheets."""
+        print(
+            "Keeper(s) with the most clean sheets with "
+            f"{self.get_most_clean_sheets_by_keeper()} clean sheet(s):"
+        )
+        for keeper in self.get_keepers_with_most_clean_sheets():
+            print("\t" + keeper.name)
 
     def get_top_goals_scored(self) -> int:
         """Get the highest number of goals scored by a single player.
@@ -107,10 +128,10 @@ class AllPlayers:
 class Team(BaseModel):
     """Hold information about a team."""
 
-    # TODO: add games_played (or equivalent)
     id: int
     name: str
     short_name: str
+    played: int
     points: int
     goals_for: int = 0
     goals_against: int = 0
@@ -125,6 +146,7 @@ class Team(BaseModel):
 
     def reset_stats(self):
         """Reset points and goal statistics."""
+        self.played = 0
         self.points = 0
         self.goals_for = 0
         self.goals_against = 0
@@ -149,6 +171,7 @@ class League:
 
     teams: List[Team]
     fixtures: List[Fixture]
+    players: AllPlayers
 
     def __post_init__(self):
         self.calculate_team_stats()
@@ -160,10 +183,11 @@ class League:
     def display_table(self):
         """Display the current table."""
         current_table = self.get_table()
-        print("TEAM\tGD\tGF\tGA\tPOINTS")
+        print("TEAM\tP\tGD\tGF\tGA\tPOINTS")
         print("===============================================")
         for team in current_table:
             print(team.short_name, end="\t")
+            print(team.played, end="\t")
             print(team.goal_difference, end="\t")
             print(team.goals_for, end="\t")
             print(team.goals_against, end="\t")
@@ -176,6 +200,10 @@ class League:
             try:
                 home_team = self.get_team_with_id(fixture.team_h)
                 away_team = self.get_team_with_id(fixture.team_a)
+                # add games played
+                if fixture.kickoff_time.date() <= datetime.now().date():
+                    home_team.played += 1
+                    away_team.played += 1
                 # update home team goals for/against
                 home_team.goals_for += fixture.team_h_score
                 home_team.goals_against += fixture.team_a_score
@@ -190,7 +218,6 @@ class League:
                 else:
                     home_team.points += 1
                     away_team.points += 1
-            # TODO: add games played.
             except TypeError:
                 pass
 
