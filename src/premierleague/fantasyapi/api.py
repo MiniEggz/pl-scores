@@ -1,4 +1,4 @@
-# contain methods used to pull data from FPL api.
+"""Premier league api."""
 from typing import List
 
 import requests

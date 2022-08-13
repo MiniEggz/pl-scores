@@ -1,15 +1,10 @@
 """Objects for premier league results guesser."""
-# will contain objects used for creating guesses, etc.
 from dataclasses import dataclass
 from datetime import datetime
 from functools import cmp_to_key
 from typing import List, Optional
 
 from pydantic import BaseModel
-
-# PremState
-# dict containing league positions
-# variables holding other statistics
 
 
 class Player(BaseModel):

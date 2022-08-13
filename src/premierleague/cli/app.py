@@ -1,4 +1,4 @@
-# contain the cli application
+"""Cli application."""
 import argparse
 
 from src.premierleague.fantasyapi.api import PremierLeagueAPI
