@@ -5,11 +5,8 @@ setup(
     name="premierleague",
     version=1.0,
     packages=find_packages(
-        include=[
-            "src.premierleague",
-            "src.premierleague.fantasyapi",
-            "src.premierleague.cli",
-        ]
+        where="src",
     ),
-    entry_points={"console_scripts": ["prem=src.premierleague.cli.app:main"]},
+    package_dir={"": "src"},
+    entry_points={"console_scripts": ["prem=premierleague.cli.app:main"]},
 )

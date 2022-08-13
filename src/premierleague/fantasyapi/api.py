@@ -3,8 +3,7 @@ from typing import List
 
 import requests
 
-from src.premierleague.fantasyapi.objects import (AllPlayers, Fixture, League,
-                                                  Team)
+from premierleague.fantasyapi.objects import AllPlayers, Fixture, League, Team
 
 
 class PremierLeagueAPI:
