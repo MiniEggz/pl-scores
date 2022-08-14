@@ -24,11 +24,32 @@ class Player(BaseModel):
         return f"{self.first_name} {self.second_name}"
 
 
+# TODO: change players to all for better readability
 class AllPlayers:
     """Holds all players."""
 
     def __init__(self, players_raw: List[dict]):
         self.players = [Player(**player) for player in players_raw]
+
+    @property
+    def keepers(self) -> List[Player]:
+        """All goalkeepers."""
+        return [player for player in self.players if player.element_type == 1]
+
+    @property
+    def defenders(self) -> List[Player]:
+        """All defenders."""
+        return [player for player in self.players if player.element_type == 2]
+
+    @property
+    def midfielders(self) -> List[Player]:
+        """All midfielders."""
+        return [player for player in self.players if player.element_type == 3]
+
+    @property
+    def attackers(self) -> List[Player]:
+        """All attackers."""
+        return [player for player in self.players if player.element_type == 4]
 
     def display_top_scorers(self):
         """Display top scorers."""
@@ -63,7 +84,7 @@ class AllPlayers:
                 most_goals = player.goals_scored
         return most_goals
 
-    def get_top_scorers(self) -> List[dict]:
+    def get_top_scorers(self) -> List[Player]:
         """Get list of top scorers.
 
         Returns:
@@ -84,7 +105,7 @@ class AllPlayers:
                 most_assists = player.assists
         return most_assists
 
-    def get_top_assisters(self) -> List[dict]:
+    def get_top_assisters(self) -> List[Player]:
         """Get list of top assisters.
 
         Returns:
@@ -105,7 +126,7 @@ class AllPlayers:
                 most_clean_sheets = player.element_type
         return most_clean_sheets
 
-    def get_keepers_with_most_clean_sheets(self) -> List[dict]:
+    def get_keepers_with_most_clean_sheets(self) -> List[Player]:
         """Get the keepers with the most clean sheets.
 
         Returns:
@@ -118,6 +139,19 @@ class AllPlayers:
             for player in self.players
             if player.clean_sheets == most_clean_sheets and player.element_type == 1
         ]
+
+    def get_player_names(self, players=None) -> List[str]:
+        """Get all player names.
+
+        Args:
+            players (List[Player]): list of players to get the names of.
+
+        Returns:
+            List[str]: list of all player names.
+        """
+        if not players:
+            players = self.players
+        return [player.name for player in players]
 
 
 class Team(BaseModel):

@@ -5,7 +5,7 @@ import requests
 
 from premierleague.fantasyapi.objects import AllPlayers, Fixture, League, Team
 
-
+# TODO: make this all static
 class PremierLeagueAPI:
     """Class to interact with fantasy premier league api."""
 
