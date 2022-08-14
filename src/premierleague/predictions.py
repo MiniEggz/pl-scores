@@ -75,6 +75,55 @@ class Prediction(BaseModel):
     top_assister: Player
     top_keeper: Player
 
+    @staticmethod
+    def _correctness_message(correct: bool) -> str:
+        """Get string from bool.
+        
+        Args:
+            correct (bool): whether answer is correct.
+
+        Returns:
+            str: string to output to user.
+        """
+        if correct:
+            return "Yes"
+        else:
+            return "No"
+
+    @property
+    def teams_in_correct_position(self) -> int:
+        """Get the correctness score for the table."""
+        teams_correct = 0
+        for prediction_team, result_team in zip(self.table, pl_api.get_league().table):
+            if prediction_team.id == result_team.id:
+                teams_correct += 1
+        return teams_correct
+
+    @property
+    def is_top_scorer_correct(self) -> bool:
+        """Check if top scorer is correct."""
+        return self.top_scorer in pl_api.get_players().get_top_scorers()
+
+    @property
+    def is_top_assister_correct(self) -> bool:
+        """Check if top assister is correct."""
+        return self.top_assister in pl_api.get_players().get_top_assisters()
+
+    @property
+    def is_top_keeper_correct(self) -> bool:
+        """Check if top keeper is correct."""
+        return self.top_keeper in pl_api.get_players().get_keepers_with_most_clean_sheets()
+
+    def display_correctness(self):
+        """Output how correct the prediction was."""
+        print(f"Number of teams in correct position: {self.teams_in_correct_position}")
+        print(f"Is {self.top_scorer.name} top scorer? "
+        f"{self._correctness_message(self.is_top_scorer_correct)}")
+        print(f"Does {self.top_assister.name} have the most assists? "
+        f"{self._correctness_message(self.is_top_assister_correct)}")
+        print(f"Does {self.top_keeper.name} have the most clean sheets? "
+        f"{self._correctness_message(self.is_top_keeper_correct)}")
+
 
 @dataclass
 class PredictionReader:

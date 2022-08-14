@@ -205,13 +205,14 @@ class League:
     def __post_init__(self):
         self.calculate_team_stats()
 
-    def get_table(self):
+    @property
+    def table(self):
         """Get the current table."""
         return sorted(self.teams, key=cmp_to_key(self._compare))
 
     def display_table(self):
         """Display the current table."""
-        current_table = self.get_table()
+        current_table = self.table
         print("TEAM\tP\tGD\tGF\tGA\tPOINTS")
         print("===============================================")
         for team in current_table:
