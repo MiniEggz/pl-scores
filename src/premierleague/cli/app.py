@@ -3,6 +3,7 @@ import argparse
 
 from premierleague.fantasyapi.api import PremierLeagueAPI as pl_api
 
+
 def display_table():
     """Display premier league table."""
     pl_api.get_league().display_table()

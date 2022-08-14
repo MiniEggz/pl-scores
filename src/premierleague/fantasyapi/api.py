@@ -5,6 +5,7 @@ import requests
 
 from premierleague.fantasyapi.objects import AllPlayers, Fixture, League, Team
 
+
 class PremierLeagueAPI:
     """Class to interact with fantasy premier league api."""
 

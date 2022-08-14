@@ -78,7 +78,7 @@ class Prediction(BaseModel):
     @staticmethod
     def _correctness_message(correct: bool) -> str:
         """Get string from bool.
-        
+
         Args:
             correct (bool): whether answer is correct.
 
@@ -112,17 +112,25 @@ class Prediction(BaseModel):
     @property
     def is_top_keeper_correct(self) -> bool:
         """Check if top keeper is correct."""
-        return self.top_keeper in pl_api.get_players().get_keepers_with_most_clean_sheets()
+        return (
+            self.top_keeper in pl_api.get_players().get_keepers_with_most_clean_sheets()
+        )
 
     def display_correctness(self):
         """Output how correct the prediction was."""
         print(f"Number of teams in correct position: {self.teams_in_correct_position}")
-        print(f"Is {self.top_scorer.name} top scorer? "
-        f"{self._correctness_message(self.is_top_scorer_correct)}")
-        print(f"Does {self.top_assister.name} have the most assists? "
-        f"{self._correctness_message(self.is_top_assister_correct)}")
-        print(f"Does {self.top_keeper.name} have the most clean sheets? "
-        f"{self._correctness_message(self.is_top_keeper_correct)}")
+        print(
+            f"Is {self.top_scorer.name} top scorer? "
+            f"{self._correctness_message(self.is_top_scorer_correct)}"
+        )
+        print(
+            f"Does {self.top_assister.name} have the most assists? "
+            f"{self._correctness_message(self.is_top_assister_correct)}"
+        )
+        print(
+            f"Does {self.top_keeper.name} have the most clean sheets? "
+            f"{self._correctness_message(self.is_top_keeper_correct)}"
+        )
 
 
 @dataclass
@@ -198,7 +206,6 @@ class PredictionReader:
             if self.validator.validate_player_name(player_name, keepers_only=True):
                 self.top_keeper = self._player_with_name(player_name)
                 break
-
 
     def read_predictions(self) -> Prediction:
         """Read all predictions.

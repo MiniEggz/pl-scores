@@ -213,16 +213,16 @@ class League:
     def display_table(self):
         """Display the current table."""
         current_table = self.table
-        print("TEAM\tP\tGD\tGF\tGA\tPOINTS")
-        print("===============================================")
-        for team in current_table:
+        print("\tTEAM\tP\tGD\tGF\tGA\tPOINTS")
+        print("\t===============================================")
+        for pos, team in enumerate(current_table):
+            print(f"{pos+1}.", end="\t")
             print(team.short_name, end="\t")
             print(team.played, end="\t")
             print(team.goal_difference, end="\t")
             print(team.goals_for, end="\t")
             print(team.goals_against, end="\t")
             print(team.points)
-        print("===============================================")
 
     def calculate_team_stats(self):
         """Calculate the points and score statistics."""
@@ -231,7 +231,7 @@ class League:
                 home_team = self.get_team_with_id(fixture.team_h)
                 away_team = self.get_team_with_id(fixture.team_a)
                 # add games played
-                if fixture.kickoff_time.date() <= datetime.now().date():
+                if fixture.kickoff_time.timestamp() < datetime.now().timestamp():
                     home_team.played += 1
                     away_team.played += 1
                 # update home team goals for/against
