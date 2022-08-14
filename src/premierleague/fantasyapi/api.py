@@ -5,43 +5,49 @@ import requests
 
 from premierleague.fantasyapi.objects import AllPlayers, Fixture, League, Team
 
-# TODO: make this all static
 class PremierLeagueAPI:
     """Class to interact with fantasy premier league api."""
 
     BASE_URL = "https://fantasy.premierleague.com/api"
 
-    def get_players_raw_data(self) -> List[dict]:
+    @classmethod
+    def get_players_raw_data(cls) -> List[dict]:
         """Get raw data for all players."""
-        return requests.get(f"{self.BASE_URL}/bootstrap-static/").json().get("elements")
+        return requests.get(f"{cls.BASE_URL}/bootstrap-static/").json().get("elements")
 
-    def get_teams_raw_data(self) -> List[dict]:
+    @classmethod
+    def get_teams_raw_data(cls) -> List[dict]:
         """Get raw data for all teams."""
-        return requests.get(f"{self.BASE_URL}/bootstrap-static/").json().get("teams")
+        return requests.get(f"{cls.BASE_URL}/bootstrap-static/").json().get("teams")
 
-    def get_fixtures_raw_data(self) -> List[dict]:
+    @classmethod
+    def get_fixtures_raw_data(cls) -> List[dict]:
         """Get all raw data for all fixtures."""
-        return requests.get(f"{self.BASE_URL}/fixtures/").json()
+        return requests.get(f"{cls.BASE_URL}/fixtures/").json()
 
-    def get_players(self) -> AllPlayers:
+    @classmethod
+    def get_players(cls) -> AllPlayers:
         """Get all players."""
-        players_raw = self.get_players_raw_data()
+        players_raw = cls.get_players_raw_data()
         return AllPlayers(players_raw)
 
-    def get_teams(self) -> List[Team]:
+    @classmethod
+    def get_teams(cls) -> List[Team]:
         """Get all teams."""
-        teams_raw = self.get_teams_raw_data()
+        teams_raw = cls.get_teams_raw_data()
         return [Team(**team) for team in teams_raw]
 
-    def get_fixtures(self) -> List[Fixture]:
+    @classmethod
+    def get_fixtures(cls) -> List[Fixture]:
         """Get all fixtures."""
-        fixtures_raw = self.get_fixtures_raw_data()
+        fixtures_raw = cls.get_fixtures_raw_data()
         return [Fixture(**fixture) for fixture in fixtures_raw]
 
-    def get_league(self) -> League:
+    @classmethod
+    def get_league(cls) -> League:
         """Get the league."""
         return League(
-            teams=self.get_teams(),
-            fixtures=self.get_fixtures(),
-            players=self.get_players(),
+            teams=cls.get_teams(),
+            fixtures=cls.get_fixtures(),
+            players=cls.get_players(),
         )

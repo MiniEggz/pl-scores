@@ -5,7 +5,7 @@ from typing import List, Optional
 
 from pydantic import BaseModel
 
-from premierleague.fantasyapi.api import PremierLeagueAPI
+from premierleague.fantasyapi.api import PremierLeagueAPI as pl_api
 from premierleague.fantasyapi.objects import Player, Team
 
 
@@ -13,7 +13,6 @@ class Validator:
     """Validate input for players and teams."""
 
     def __init__(self):
-        pl_api = PremierLeagueAPI()
         self.players = pl_api.get_players()
         self.teams = pl_api.get_teams()
 

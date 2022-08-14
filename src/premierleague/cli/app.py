@@ -1,10 +1,7 @@
 """Cli application."""
 import argparse
 
-from premierleague.fantasyapi.api import PremierLeagueAPI
-
-pl_api = PremierLeagueAPI()
-
+from premierleague.fantasyapi.api import PremierLeagueAPI as pl_api
 
 def display_table():
     """Display premier league table."""
