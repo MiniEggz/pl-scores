@@ -1,6 +1,9 @@
 """Premier league predictions."""
 
+import os
+import json
 from dataclasses import dataclass, field
+from pathlib import Path
 from typing import List, Optional
 
 from pydantic import BaseModel
@@ -70,6 +73,7 @@ class Validator:
 class Prediction(BaseModel):
     """Prediction of the state of the league."""
 
+    name: str
     table: List[Team]
     top_scorer: Player
     top_assister: Player
@@ -132,11 +136,39 @@ class Prediction(BaseModel):
             f"{self._correctness_message(self.is_top_keeper_correct)}"
         )
 
+    def save(self):
+        """Save prediction to JSON file."""
+        # TODO: check if file exists and then ask user if they want to overwrite
+        predictions_path = Path(__file__).parent / "predictions"
+        if not os.path.exists(predictions_path):
+            os.makedirs(predictions_path)
+        with open(
+            Path(predictions_path) / f"{self.name}.json", "w"
+        ) as prediction_file:
+            json.dump(self.dict(), prediction_file)
+
+    @staticmethod
+    def read_from_file(file_name: str) -> BaseModel:
+        """Read prediction from given JSON file.
+        
+        Args:
+            file_name (str): name of file with .json.
+
+        Returns:
+            Prediction: prediction object for the stored prediction. 
+        """
+        # TODO: add validation for file path
+        predictions_path = Path(__file__).parent / "predictions"
+        with open(predictions_path / file_name, "r") as prediction_file:
+            prediction_json = json.load(prediction_file)
+        return Prediction(**prediction_json)
+
 
 @dataclass
 class PredictionReader:
     """Read in predictions from the terminal."""
 
+    name: str = None
     table: List[Team] = field(default_factory=list)
     top_scorer: Optional[Player] = None
     top_assister: Optional[Player] = None
@@ -169,7 +201,7 @@ class PredictionReader:
             if player.name == player_name:
                 return player
 
-    def read_table_prediction(self):
+    def _read_table_prediction(self):
         """Read predictions for the table state."""
         team_names = []
         for i in range(1, 21):
@@ -183,7 +215,7 @@ class PredictionReader:
                         break
         self.table = [self._team_with_name(team_name) for team_name in team_names]
 
-    def read_top_scorer_prediction(self):
+    def _read_top_scorer_prediction(self):
         """Read prediction for top scorer."""
         while True:
             player_name = input("Top scorer: ")
@@ -191,7 +223,7 @@ class PredictionReader:
                 self.top_scorer = self._player_with_name(player_name)
                 break
 
-    def read_top_assister_prediction(self):
+    def _read_top_assister_prediction(self):
         """Read prediction for top assister."""
         while True:
             player_name = input("Top assister: ")
@@ -199,7 +231,7 @@ class PredictionReader:
                 self.top_assister = self._player_with_name(player_name)
                 break
 
-    def read_top_keeper_prediction(self):
+    def _read_top_keeper_prediction(self):
         """Read prediction for keeper with most clean sheets."""
         while True:
             player_name = input("Top keeper: ")
@@ -213,8 +245,9 @@ class PredictionReader:
         Returns:
             Prediction: premier league outcome prediction.
         """
-        self.read_table_prediction()
-        self.read_top_scorer_prediction()
-        self.read_top_assister_prediction()
-        self.read_top_keeper_prediction()
+        self.name = input("Name: ")
+        self._read_table_prediction()
+        self._read_top_scorer_prediction()
+        self._read_top_assister_prediction()
+        self._read_top_keeper_prediction()
         return Prediction(**self.__dict__)
