@@ -190,7 +190,7 @@ class Fixture(BaseModel):
     team_a: int
     team_a_score: Optional[int]
     minutes: int
-    kickoff_time: datetime
+    kickoff_time: Optional[datetime]
     finished: bool
 
 
@@ -249,6 +249,8 @@ class League:
                     home_team.points += 1
                     away_team.points += 1
             except TypeError:
+                pass
+            except AttributeError:
                 pass
 
     def get_team_with_id(self, team_id: int) -> Team:
